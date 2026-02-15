@@ -16,15 +16,15 @@ import google.generativeai as genai
 load_dotenv()
 
 # --- API Keys & Token ---
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
+GOOGLE_API_KEY = ("GOOGLE_API_KEY")
+DISCORD_TOKEN = ('DISCORD_TOKEN')
 
 genai.configure(api_key=GOOGLE_API_KEY)
 model = genai.GenerativeModel('gemini-2.5-flash')
 
 # --- Quyền hạn ---
-OWNER_IDS = [int(uid.strip()) for uid in os.getenv('OWNER_ID', '').split(',') if uid.strip()]
-AUTHORIZED_USERS = [int(uid.strip()) for uid in os.getenv('AUTHORIZED_USERS', '').split(',') if uid.strip()]
+OWNER_IDS = 'OWNER_ID'
+AUTHORIZED_USERS = 'AUTHORIZED_USERS'
 
 # --- Discord Channel IDs ---
 CHANNEL_ID = 1412070904493637673          # Kênh thông báo bot
@@ -34,11 +34,13 @@ CHAT_CHINH_ID = 1287024355309654058       # Kênh chat chính
 NSFW_CHANNEL_ID = 1320038444751126698     # Kênh NSFW
 
 # --- Đường dẫn thư mục ---
-VIDEO_FOLDER_UMA = r"d:/Download/Video/Uma"
-VIDEO_FOLDER_MAIN = r"d:/Download/Video/Xam"
-VIDEO_FOLDER_BA = r"d:/Download/Video/BA"
-VIDEO_FILE = "d:/Download/Video/sech/Video_URL.txt"
-IMAGE_FILE = "d:/Download/Video/Xam/cocailon.jpg"
+BASE_DIR = os.path.expanduser("~")
+
+VIDEO_FOLDER_UMA = os.path.join(BASE_DIR, "bot_videos", "Uma")
+VIDEO_FOLDER_MAIN = os.path.join(BASE_DIR, "bot_videos", "Xam")
+VIDEO_FOLDER_BA = os.path.join(BASE_DIR, "bot_videos", "BA")
+VIDEO_FILE = os.path.join(BASE_DIR, "bot_videos", "sech", "Video_URL.txt")
+IMAGE_FILE = os.path.join(BASE_DIR, "bot_videos", "Xam", "cocailon.jpg")
 
 # --- Đường dẫn video cố định ---
 VIDEO_PATHS = {
