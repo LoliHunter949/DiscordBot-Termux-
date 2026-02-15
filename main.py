@@ -6,43 +6,37 @@ import datetime
 import json
 import time
 import os
-from dotenv import load_dotenv
 import google.generativeai as genai
 
-# ============================================================
-# PHẦN 1: CẤU HÌNH & KHỞI TẠO
-# ============================================================
-
-load_dotenv()
-
-# --- API Keys & Token ---
-GOOGLE_API_KEY = ("GOOGLE_API_KEY")
-DISCORD_TOKEN = ('DISCORD_TOKEN')
+# --- API Keys & Token (HARDCODE) ---
+GOOGLE_API_KEY = "AIzaSy_xxxxxxxxxxxxxxxxxxxxxxxxxx"  # Dán API key thật vào đây
+DISCORD_TOKEN = "MTQxMjI4OTkzMjYwODY2NzcxOQ.xxxxxx"  # Dán token thật vào đây
 
 genai.configure(api_key=GOOGLE_API_KEY)
 model = genai.GenerativeModel('gemini-2.5-flash')
 
 # --- Quyền hạn ---
-OWNER_IDS = 'OWNER_ID'
-AUTHORIZED_USERS = 'AUTHORIZED_USERS'
+OWNER_IDS = [1261880457268564109]          # Thay bằng ID thật của bạn
+AUTHORIZED_USERS = [123456789012345678]    # Thay bằng ID thật
 
 # --- Discord Channel IDs ---
-CHANNEL_ID = 1412070904493637673          # Kênh thông báo bot
-WELCOME_CHANNEL_ID = 1412069447014813766  # Kênh chào mừng
-NOTIFICATION_CHANNEL_ID = 1412070731688317000  # Kênh thông báo rời/ban
-CHAT_CHINH_ID = 1287024355309654058       # Kênh chat chính
-NSFW_CHANNEL_ID = 1320038444751126698     # Kênh NSFW
+CHANNEL_ID = 1412070904493637673
+WELCOME_CHANNEL_ID = 1412069447014813766
+NOTIFICATION_CHANNEL_ID = 1412070731688317000
+CHAT_CHINH_ID = 1287024355309654058
+NSFW_CHANNEL_ID = 1320038444751126698
 
 # --- Đường dẫn thư mục ---
-BASE_DIR = os.path.expanduser("~")
+# bot_videos nằm trong sdcard
+# Termux truy cập sdcard qua: ~/storage/shared/
+BASE_MEDIA = os.path.join(os.path.expanduser("~"), "storage", "shared", "bot_videos")
 
-VIDEO_FOLDER_UMA = os.path.join(BASE_DIR, "bot_videos", "Uma")
-VIDEO_FOLDER_MAIN = os.path.join(BASE_DIR, "bot_videos", "Xam")
-VIDEO_FOLDER_BA = os.path.join(BASE_DIR, "bot_videos", "BA")
-VIDEO_FILE = os.path.join(BASE_DIR, "bot_videos", "sech", "Video_URL.txt")
-IMAGE_FILE = os.path.join(BASE_DIR, "bot_videos", "Xam", "cocailon.jpg")
+VIDEO_FOLDER_UMA = os.path.join(BASE_MEDIA, "Uma")
+VIDEO_FOLDER_MAIN = os.path.join(BASE_MEDIA, "Xam")
+VIDEO_FOLDER_BA = os.path.join(BASE_MEDIA, "BA")
+VIDEO_FILE = os.path.join(BASE_MEDIA, "sech", "Video_URL.txt")
+IMAGE_FILE = os.path.join(BASE_MEDIA, "Xam", "cocailon.jpg")
 
-# --- Đường dẫn video cố định ---
 VIDEO_PATHS = {
     "cay": os.path.join(VIDEO_FOLDER_MAIN, "cay.mov"),
     "tusena": os.path.join(VIDEO_FOLDER_MAIN, "tusenachuilgbt.mp4"),
@@ -53,6 +47,20 @@ VIDEO_PATHS = {
     "dopc": os.path.join(VIDEO_FOLDER_MAIN, "bopc.jpg"),
     "phaichiu": os.path.join(VIDEO_FOLDER_MAIN, "phaichiu.mp4"),
 }
+
+# Kiểm tra thư mục khi khởi động
+print(f"[INFO] Media path: {BASE_MEDIA}")
+if os.path.exists(BASE_MEDIA):
+    print(f"[OK] Thư mục bot_videos tồn tại")
+    for name in ["Xam", "Uma", "BA", "sech"]:
+        path = os.path.join(BASE_MEDIA, name)
+        if os.path.exists(path):
+            print(f"  [OK] {name}/: {len(os.listdir(path))} files")
+        else:
+            print(f"  [WARNING] {name}/ KHÔNG TỒN TẠI!")
+else:
+    print(f"[ERROR] {BASE_MEDIA} KHÔNG TỒN TẠI!")
+    print(f"[INFO] Chạy 'termux-setup-storage' trước rồi thử lại")
 
 # --- Tiền tệ ---
 CURRENCY_NAME = "VNDC"
