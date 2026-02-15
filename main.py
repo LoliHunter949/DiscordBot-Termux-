@@ -16,8 +16,8 @@ DISCORD_TOKEN = "skibidi"
 ##model = genai.GenerativeModel('gemini-2.5-flash')
 
 # --- Quyền hạn ---
-OWNER_IDS = [1261880457268564109]          # Thay bằng ID thật của bạn
-AUTHORIZED_USERS = [1334555748407185439]    # Thay bằng ID thật
+OWNER_IDS = [0]          # Thay bằng ID thật của bạn
+AUTHORIZED_USERS = [0]    # Thay bằng ID thật
 
 # --- Discord Channel IDs ---
 CHANNEL_ID = 1412070904493637673
