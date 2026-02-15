@@ -6,18 +6,18 @@ import datetime
 import json
 import time
 import os
-import google.generativeai as genai
+##import google.generativeai as genai
 
 # --- API Keys & Token (HARDCODE) ---
-GOOGLE_API_KEY = "AIzaSy_xxxxxxxxxxxxxxxxxxxxxxxxxx"  # Dán API key thật vào đây
-DISCORD_TOKEN = "MTQxMjI4OTkzMjYwODY2NzcxOQ.xxxxxx"  # Dán token thật vào đây
+##GOOGLE_API_KEY = ""  # Dán API key thật vào đây
+DISCORD_TOKEN = "skibidi"
 
-genai.configure(api_key=GOOGLE_API_KEY)
-model = genai.GenerativeModel('gemini-2.5-flash')
+##genai.configure(api_key=GOOGLE_API_KEY)
+##model = genai.GenerativeModel('gemini-2.5-flash')
 
 # --- Quyền hạn ---
 OWNER_IDS = [1261880457268564109]          # Thay bằng ID thật của bạn
-AUTHORIZED_USERS = [123456789012345678]    # Thay bằng ID thật
+AUTHORIZED_USERS = [1334555748407185439]    # Thay bằng ID thật
 
 # --- Discord Channel IDs ---
 CHANNEL_ID = 1412070904493637673
@@ -1035,50 +1035,61 @@ async def run_race_simulation(ctx, all_results: list):
     return winner, final_results
 
 
-@bot.command(name='duangua', aliases=['dsngua', 'odds'], help='Xem bảng tỷ lệ cược đua ngựa.')
-async def show_odds(ctx):
+@bot.command(name='duangua', aliases=['dsngua', 'odds'])
+async def duangua_list(ctx):
     global cached_race_stats
     user_id = str(ctx.author.id)
-    ensure_account(user_id, 1000)
+    if user_id not in player_balances:
+        player_balances[user_id] = 1000
 
     all_results = calculate_stats_and_odds(ENTITIES)
     cached_race_stats = all_results
-
+    
     embed = discord.Embed(
-        title="🐎 BẢNG TỶ LỆ CƯỢC ĐUA NGỰA 🐎",
-        description="Đặt cược: `!datcuoc <Tên ngựa> <Số tiền> [Lever]`",
+        title="🐎 BẢNG TỶ LỆ CƯỢC ĐUA NGỰA HÔM NAY 🐎",
+        description="Chọn ngựa của bạn và đặt cược bằng lệnh `!datcuoc <Tên> <Số tiền> [Lever]`",
         color=discord.Color.gold()
     )
-
-    stats_lines = []
-    for r in all_results:
-        skill = r.get('skill')
-        skill_text = ""
-        if skill:
-            skill_text = (
-                f"\n   ⚡ **{skill['name']}** "
-                f"({int(skill['activation_chance'] * 100)}% | x{skill['speed_multiplier']})"
-            )
-        stats_lines.append(
-            f"{r['emoji']} **{r['name']}**: "
-            f"Chỉ số: **{r['stats']}** | Odds: **x{r['odds']}**{skill_text}"
+    
+    # Chia 8 ngựa thành 2 nhóm (4 + 4) để không vượt 1024 ký tự
+    half = len(all_results) // 2
+    
+    # Nhóm 1
+    stats_list_1 = []
+    for result in all_results[:half]:
+        stats_list_1.append(
+            f"{result['emoji']} **{result['name']}**: "
+            f"Chỉ số: **{result['stats']}** | "
+            f"Tỷ lệ cược: **{result['odds']}%**"
         )
-
-    embed.add_field(name="Ứng Viên", value="\n\n".join(stats_lines), inline=False)
+    
+    # Nhóm 2
+    stats_list_2 = []
+    for result in all_results[half:]:
+        stats_list_2.append(
+            f"{result['emoji']} **{result['name']}**: "
+            f"Chỉ số: **{result['stats']}** | "
+            f"Tỷ lệ cược: **{result['odds']}%**"
+        )
+    
     embed.add_field(
-        name="💰 Số dư", 
-        value=f"**{format_money(player_balances[user_id])}** {CURRENCY_NAME}",
+        name="Các Ứng Viên & Chỉ Số Hiện Tại (Ngẫu nhiên)", 
+        value="\n".join(stats_list_1), 
         inline=False
     )
     embed.add_field(
-        name="⚡ Hệ thống Skill",
-        value=(
-            f"Skill kích hoạt ở **3 bước cuối**, chỉ **1 lần**, kéo dài **{SKILL_DURATION} bước**.\n"
-            "Ngựa yếu + skill mạnh = cơ hội lội ngược dòng! 🔥"
-        ),
+        name="​",  # Ký tự zero-width space làm tiêu đề trống
+        value="\n".join(stats_list_2), 
         inline=False
     )
-    embed.set_footer(text="Chỉ số ngẫu nhiên mỗi lần xem. Skill ngẫu nhiên khi đua!")
+    
+    embed.add_field(
+        name="💰 Số dư của bạn", 
+        value=f"Hiện tại: **{format_money(player_balances[user_id])}** {CURRENCY_NAME}", 
+        inline=False
+    )
+                    
+    embed.set_footer(text="Chỉ số và Tỷ lệ cược được tính ngẫu nhiên mỗi lần xem.")
 
     await ctx.send(embed=embed)
 
@@ -1329,13 +1340,13 @@ async def on_message(message):
             return
 
         # AI response
-        try:
-            response = await model.generate_content_async([PERSONA_PROMPT, question])
-            await channel.send(response.text)
-        except Exception as e:
-            print(f"[AI ERROR] {e}")
-            await channel.send(random.choice(ERROR_ANSWERS))
-        return
+        ##try:
+            ##response = await model.generate_content_async([PERSONA_PROMPT, question])
+            ##await channel.send(response.text)
+        ##except Exception as e:
+            ##print(f"[AI ERROR] {e}")
+            ##await channel.send(random.choice(ERROR_ANSWERS))
+        ##return
 
     # --- Từ khóa: Ưu tiên cụm từ dài trước ---
     
